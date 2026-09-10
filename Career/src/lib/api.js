@@ -1,0 +1,49 @@
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+
+async function request(endpoint, options = {}) {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...options.headers
+        },
+        body: options.body ? JSON.stringify(options.body) : undefined
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+        throw new Error(data.message || "Something went wrong");
+    }
+
+    return data;
+}
+
+export const sendOTP = (email) => request("/auth/send-otp", {
+    method: "POST",
+    body: { email }
+});
+
+export const verifyOTP = (email, otp) => request("/auth/verify-otp", {
+    method: "POST",
+    body: { email, otp }
+});
+
+export const registerUser = (name, email, password) => request("/auth/register", {
+    method: "POST",
+    body: { name, email, password }
+});
+
+export const loginUser = (email, password) => request("/auth/login", {
+    method: "POST",
+    body: { email, password }
+});
+
+export const createTask = (taskData) => request("/tasks", {
+    method: "POST",
+    body: taskData
+});
+
+export const getTasks = () => request("/tasks", {
+    method: "GET"
+});

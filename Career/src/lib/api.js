@@ -47,3 +47,17 @@ export const createTask = (taskData) => request("/tasks", {
 export const getTasks = () => request("/tasks", {
     method: "GET"
 });
+
+
+export const getTask = (taskId) => request(`/tasks/${taskId}`, {
+    method: "GET"
+});
+
+export const updateTask = (taskId, taskData) => request(`/tasks/${taskId}`, {
+    method: "PUT",
+    body: taskData
+});
+
+export const deleteTask = (taskId) => request(`/tasks/${taskId}`, {
+    method: "DELETE"
+});

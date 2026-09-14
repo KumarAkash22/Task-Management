@@ -1,7 +1,7 @@
 import '../App.css'
 import { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { getTasks } from '../lib/api'
+import { Link, useNavigate } from 'react-router-dom'
+import { deleteTask, getTasks } from '../lib/api'
 
 const formatDate = (value) => {
     if (!value) return '-'
@@ -19,6 +19,10 @@ function Dashboard() {
     const [tasks, setTasks] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
+    const [taskToDelete, setTaskToDelete] = useState(null)
+    const [deleting, setDeleting] = useState(false)
+    const [deleteSuccess, setDeleteSuccess] = useState('')
+    const navigate = useNavigate()
 
     useEffect(() => {
         let isMounted = true
@@ -46,6 +50,23 @@ function Dashboard() {
             isMounted = false
         }
     }, [])
+
+    async function handleDelete() {
+        if (!taskToDelete) return
+
+        setDeleting(true)
+        try {
+            await deleteTask(taskToDelete._id)
+            setTasks((currentTasks) => currentTasks.filter((task) => task._id !== taskToDelete._id))
+            setTaskToDelete(null)
+            setDeleteSuccess('Task deleted successfully.')
+            window.setTimeout(() => setDeleteSuccess(''), 3000)
+        } catch (deleteError) {
+            setError(deleteError.message || 'Failed to delete task')
+        } finally {
+            setDeleting(false)
+        }
+    }
 
     const summary = useMemo(() => {
         const total = tasks.length
@@ -83,6 +104,7 @@ function Dashboard() {
                         + Add Task
                     </Link>
                 </header>
+                {deleteSuccess && <p className="success-message" role="status">{deleteSuccess}</p>}
 
                 <section className="summary-grid">
                     {summary.map((item) => (
@@ -121,6 +143,7 @@ function Dashboard() {
                                         <th>Assigned</th>
                                         <th>Due Date</th>
                                         <th>Status</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -139,6 +162,33 @@ function Dashboard() {
                                                 <span className={`status ${task.status?.toLowerCase().replace(/\s+/g, '-')}`}>
                                                     {task.status || 'Pending'}
                                                 </span>
+                                            </td>
+                                            <td>
+                                                <div className="task-actions">
+                                                    <button
+                                                        type="button"
+                                                        className="icon-btn view-btn"
+                                                        title="View and edit task"
+                                                        aria-label={`View ${task.title}`}
+                                                        onClick={() => navigate(`/create-task/${task._id}`)}
+                                                    >
+                                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                            <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z" />
+                                                            <circle cx="12" cy="12" r="2.5" />
+                                                        </svg>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className="icon-btn delete-btn"
+                                                        title="Delete task"
+                                                        aria-label={`Delete ${task.title}`}
+                                                        onClick={() => setTaskToDelete(task)}
+                                                    >
+                                                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                                                            <path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7l1-3h4l1 3" />
+                                                        </svg>
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}
@@ -167,6 +217,22 @@ function Dashboard() {
                         </div>
                     </div>
                 </section>
+                {taskToDelete && (
+                    <div className="modal-backdrop" role="presentation">
+                        <div className="delete-modal" role="dialog" aria-modal="true" aria-labelledby="delete-title">
+                            <h2 id="delete-title">Delete task?</h2>
+                            <p>Do you want to permanently delete “{taskToDelete.title}”?</p>
+                            <div className="modal-actions">
+                                <button type="button" className="secondary-btn" onClick={() => setTaskToDelete(null)} disabled={deleting}>
+                                    Cancel
+                                </button>
+                                <button type="button" className="danger-btn" onClick={handleDelete} disabled={deleting}>
+                                    {deleting ? 'Deleting...' : 'Yes, delete'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     )

@@ -16,6 +16,7 @@ createRoot(document.getElementById('root')).render(
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/create-task" element={<CreateTask />} />
+        <Route path="/create-task/:taskId" element={<CreateTask />} />
         <Route path="*" element={<Navigate to="/signup" replace />} />
       </Routes>
     </BrowserRouter>

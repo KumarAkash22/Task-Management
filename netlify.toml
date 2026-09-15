@@ -1,7 +1,14 @@
 [build]
-  functions = "netlify/functions"
+  command = "npm install --prefix backend && npm install --prefix Career && npm run build --prefix Career"
+  publish = "Career/dist"
+  functions = "backend/netlify/functions"
 
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/api/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
   status = 200

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { createTask, getTask, updateTask } from '../lib/api'
 import Dropdown from '../components/Dropdown'
+import DashboardHeader from '../components/DashboardHeader'
 
 
 function CreateTask() {
@@ -21,6 +22,8 @@ function CreateTask() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
     const [initialLoading, setInitialLoading] = useState(isEditing)
+    const storedUser = localStorage.getItem('taskAppUser')
+    const user = storedUser ? JSON.parse(storedUser) : null
 
     useEffect(() => {
         if (!taskId) return
@@ -76,7 +79,8 @@ function CreateTask() {
     }
 
     return (
-        <main className="min-h-screen bg-[#f7f8f5] px-4 py-6 text-slate-900 sm:px-8 sm:py-10">
+        <main className="task-page min-h-screen bg-[#f7f8f5] px-4 pb-6 pt-0 text-left text-slate-900 sm:px-8 sm:pb-10">
+            <DashboardHeader userName={user?.name || 'User'} variant="task" />
             <div className="mx-auto max-w-6xl">
                 <header className="mb-8 flex flex-col gap-5 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
                     <div className="flex items-center gap-4">

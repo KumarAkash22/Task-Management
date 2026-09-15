@@ -32,7 +32,53 @@ const createTask = async (req, res) => {
 
 const getTasks = async (req, res) => {
     try {
-        const tasks = await Task.find().sort({ createdAt: -1 });
+        const { search, status, priority, sortDueDate } = req.query;
+        const filter = {};
+        const validStatuses = ["Pending", "In Progress", "Completed"];
+        const validPriorities = ["High", "Medium", "Low"];
+
+        if (search) {
+            const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            filter.title = { $regex: escapedSearch, $options: "i" };
+        }
+
+        if (status && !validStatuses.includes(status)) {
+            return res.status(400).json({ message: "Invalid task status filter" });
+        }
+
+        if (priority && !validPriorities.includes(priority)) {
+            return res.status(400).json({ message: "Invalid task priority filter" });
+        }
+
+        if (status) filter.status = status;
+        if (priority) filter.priority = priority;
+
+        let tasksQuery = Task.find(filter);
+
+        if (sortDueDate === "asc" || sortDueDate === "desc") {
+            tasksQuery = Task.aggregate([
+                { $match: filter },
+                {
+                    $addFields: {
+                        dueDateMissing: {
+                            $cond: [{ $eq: ["$dueDate", null] }, 1, 0]
+                        }
+                    }
+                },
+                {
+                    $sort: {
+                        dueDateMissing: 1,
+                        dueDate: sortDueDate === "asc" ? 1 : -1,
+                        createdAt: -1
+                    }
+                },
+                { $project: { dueDateMissing: 0 } }
+            ]);
+        } else {
+            tasksQuery = tasksQuery.sort({ createdAt: -1 });
+        }
+
+        const tasks = await tasksQuery;
 
         res.json({
             tasks

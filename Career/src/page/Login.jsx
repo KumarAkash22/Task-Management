@@ -20,7 +20,8 @@ function Login() {
         setError('')
 
         try {
-            await loginUser(formData.email, formData.password)
+            const response = await loginUser(formData.email, formData.password)
+            localStorage.setItem('taskAppUser', JSON.stringify(response.user))
             navigate('/dashboard')
         } catch (requestError) {
             setError(requestError.message)

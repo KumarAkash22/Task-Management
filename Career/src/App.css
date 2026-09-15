@@ -210,8 +210,12 @@
 .dashboard-page {
     min-height: 100vh;
     background: #f4f7fb;
-    padding: 32px 20px;
+    padding: 0 20px 32px;
     box-sizing: border-box;
+}
+
+.task-page {
+    text-align: left;
 }
 
 .dashboard-shell {
@@ -235,10 +239,67 @@
     font-weight: 700;
 }
 
+.shared-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 14px 18px;
+    border: 1px solid #dbeafe;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    backdrop-filter: blur(8px);
+}
+
+.task-header {
+    margin: 0 auto 24px;
+    width: min(100%, 1152px);
+    border-color: #d1fae5;
+}
+
+.dashboard-header + .dashboard-actions {
+    margin-top: 24px;
+}
+
 .dashboard-header h1 {
     margin: 0;
     font-size: 2.2rem;
     color: #111827;
+}
+
+.brand-block {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.signout-btn {
+    color: #b91c1c;
+    background: #fef2f2;
+}
+
+.dashboard-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.dashboard-actions .eyebrow {
+    margin: 0;
 }
 
 .primary-btn,
@@ -318,6 +379,24 @@
     justify-content: space-between;
     gap: 16px;
     margin-bottom: 20px;
+}
+
+.task-filters {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.task-filters select {
+    min-width: 145px;
+    padding: 10px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #f9fafb;
+    color: #374151;
+    font-size: 0.9rem;
+    cursor: pointer;
 }
 
 .search-box {
@@ -560,12 +639,25 @@ tr:last-child td {
         align-items: flex-start;
     }
 
+    .shared-header {
+        gap: 12px;
+    }
+
     .summary-grid {
         grid-template-columns: 1fr 1fr;
     }
 
     .search-box {
         width: 100%;
+    }
+
+    .task-filters {
+        width: 100%;
+    }
+
+    .task-filters select {
+        flex: 1;
+        min-width: 0;
     }
 }
 

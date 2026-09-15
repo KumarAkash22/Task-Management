@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { registerUser, sendOTP, verifyOTP } from '../lib/api'
 import '../App.css'
@@ -16,6 +16,7 @@ function Signup() {
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState('')
     const [error, setError] = useState('')
+    const otpInputRefs = useRef([])
 
     const handleSendOTP = async () => {
         setLoading(true)
@@ -60,6 +61,7 @@ function Signup() {
                 formData.email,
                 formData.password
             )
+            localStorage.setItem('taskAppUser', JSON.stringify(data.user))
             setMessage(data.message)
             navigate('/login')
         } catch (requestError) {
@@ -79,6 +81,16 @@ function Signup() {
         setOtp((currentOtp) => currentOtp.map((currentDigit, currentIndex) => (
             currentIndex === index ? digit : currentDigit
         )))
+
+        if (digit && index < otp.length - 1) {
+            otpInputRefs.current[index + 1]?.focus()
+        }
+    }
+
+    const handleOtpKeyDown = (index, event) => {
+        if (event.key === 'Backspace' && !otp[index] && index > 0) {
+            otpInputRefs.current[index - 1]?.focus()
+        }
     }
 
     return (
@@ -115,7 +127,11 @@ function Signup() {
                                 maxLength="1"
                                 aria-label={`OTP digit ${index + 1}`}
                                 value={digit}
+                                ref={(input) => {
+                                    otpInputRefs.current[index] = input
+                                }}
                                 onChange={(event) => handleOtpChange(index, event.target.value)}
+                                onKeyDown={(event) => handleOtpKeyDown(index, event)}
                             />
                         ))}
                     </div>

@@ -44,9 +44,20 @@ export const createTask = (taskData) => request("/tasks", {
     body: taskData
 });
 
-export const getTasks = () => request("/tasks", {
-    method: "GET"
-});
+export const getTasks = (params = {}, options = {}) => {
+    const query = new URLSearchParams();
+
+    Object.entries(params).forEach(([key, value]) => {
+        if (value) query.set(key, value);
+    });
+
+    const queryString = query.toString();
+
+    return request(`/tasks${queryString ? `?${queryString}` : ""}`, {
+        method: "GET",
+        ...options
+    });
+};
 
 
 export const getTask = (taskId) => request(`/tasks/${taskId}`, {

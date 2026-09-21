@@ -2,6 +2,13 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const OTP = require("../models/OTP");
 const transporter = require("../config/mailer");
+const jwt = require("jsonwebtoken");
+
+const createToken = (user) => jwt.sign(
+    { sub: user._id.toString(), email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN || "1d" }
+);
 
 const sendOTP = async (req, res) => {
     try {
@@ -163,7 +170,7 @@ const register = async (req, res) => {
         );
 
         const user = await User.create({
-            name,
+            name: name.trim(),
             email: normalizedEmail,
             password: hashedPassword,
             isEmailVerified: true
@@ -202,7 +209,7 @@ const login = async (req, res) => {
         }
 
         const normalizedEmail = email.toLowerCase().trim();
-        const user = await User.findOne({ email: normalizedEmail });
+        const user = await User.findOne({ email: normalizedEmail }).select("+password");
 
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(401).json({
@@ -212,6 +219,7 @@ const login = async (req, res) => {
 
         res.json({
             message: "Login successful",
+            token: createToken(user),
             user: {
                 id: user._id,
                 name: user.name,

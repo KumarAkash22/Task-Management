@@ -13,12 +13,16 @@ const userSchema = new mongoose.Schema(
             required: true,
             unique: true,
             lowercase: true,
-            trim: true
+            trim: true,
+            match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
         },
 
         password: {
             type: String,
-            required: true
+            required: true,
+            minlength: 8,
+            maxlength: 128,
+            select: false
         },
 
         isEmailVerified: {

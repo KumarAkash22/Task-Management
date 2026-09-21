@@ -1,10 +1,12 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
 
 async function request(endpoint, options = {}) {
+    const token = localStorage.getItem("taskAppToken");
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         ...options,
         headers: {
             "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
             ...options.headers
         },
         body: options.body ? JSON.stringify(options.body) : undefined

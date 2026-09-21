@@ -10,6 +10,7 @@ function DashboardHeader({ userName, variant = 'dashboard' }) {
 
     const handleLogout = () => {
         localStorage.removeItem('taskAppUser')
+        localStorage.removeItem('taskAppToken')
         setShowLogoutDialog(false)
         navigate('/login', { replace: true })
     }

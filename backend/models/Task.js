@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 
 const taskSchema = new mongoose.Schema(
     {
+        owner: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+            index: true
+        },
         title: {
             type: String,
             required: true,
@@ -34,5 +40,8 @@ const taskSchema = new mongoose.Schema(
         timestamps: true
     }
 );
+
+taskSchema.index({ owner: 1, createdAt: -1 });
+taskSchema.index({ owner: 1, status: 1, priority: 1 });
 
 module.exports = mongoose.model("Task", taskSchema);

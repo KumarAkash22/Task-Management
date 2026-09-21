@@ -21,6 +21,7 @@ function Login() {
 
         try {
             const response = await loginUser(formData.email, formData.password)
+            localStorage.setItem('taskAppToken', response.token)
             localStorage.setItem('taskAppUser', JSON.stringify(response.user))
             navigate('/dashboard')
         } catch (requestError) {

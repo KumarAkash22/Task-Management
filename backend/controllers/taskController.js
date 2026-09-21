@@ -10,6 +10,7 @@ const createTask = async (req, res) => {
             });
         }
         const task = await Task.create({
+            owner: req.user.id,
             title,
             description: description || "",
             priority: priority || "Medium",
@@ -33,7 +34,7 @@ const createTask = async (req, res) => {
 const getTasks = async (req, res) => {
     try {
         const { search, status, priority, sortDueDate } = req.query;
-        const filter = {};
+        const filter = { owner: req.user.id };
         const validStatuses = ["Pending", "In Progress", "Completed"];
         const validPriorities = ["High", "Medium", "Low"];
 
@@ -94,7 +95,7 @@ const getTasks = async (req, res) => {
 
 const getTask = async (req, res) => {
     try {
-        const task = await Task.findById(req.params.id);
+        const task = await Task.findOne({ _id: req.params.id, owner: req.user.id });
 
         if (!task) {
             return res.status(404).json({ message: "Task not found" });
@@ -110,8 +111,8 @@ const getTask = async (req, res) => {
 const updateTask = async (req, res) => {
     try {
         const { title, description, priority, assignedDate, dueDate, status } = req.body;
-        const task = await Task.findByIdAndUpdate(
-            req.params.id,
+        const task = await Task.findOneAndUpdate(
+            { _id: req.params.id, owner: req.user.id },
             { title, description, priority, assignedDate, dueDate, status },
             { new: true, runValidators: true }
         );
@@ -129,7 +130,7 @@ const updateTask = async (req, res) => {
 
 const deleteTask = async (req, res) => {
     try {
-        const task = await Task.findByIdAndDelete(req.params.id);
+        const task = await Task.findOneAndDelete({ _id: req.params.id, owner: req.user.id });
 
         if (!task) {
             return res.status(404).json({ message: "Task not found" });

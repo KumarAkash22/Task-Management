@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { registerUser, sendOTP, verifyOTP } from '../lib/api'
+import PasswordInput from '../components/PasswordInput'
 import '../App.css'
 
 function Signup() {
@@ -147,7 +148,7 @@ function Signup() {
 
                 <div className="form-group">
                     <label htmlFor="password">Password</label>
-                    <input id="password" type="password" placeholder="Create a password" value={formData.password} onChange={handleFormChange} />
+                    <PasswordInput id="password" placeholder="Create a password" value={formData.password} onChange={handleFormChange} />
                 </div>
 
                 <button type="button" className="register-btn" onClick={handleRegister} disabled={loading || !otpVerified}>

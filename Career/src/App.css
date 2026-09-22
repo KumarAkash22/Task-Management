@@ -59,6 +59,33 @@
     color: #9ca3af;
 }
 
+.password-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-input-wrapper input {
+    padding-right: 72px;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    width: auto !important;
+    padding: 4px 6px !important;
+    background: transparent !important;
+    color: #2563eb !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    transform: translateY(-50%);
+}
+
+.password-toggle:hover {
+    color: #1d4ed8 !important;
+    transform: translateY(-50%);
+}
+
 .login-card button {
     width: 100%;
     background: #2563eb;

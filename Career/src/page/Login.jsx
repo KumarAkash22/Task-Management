@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { loginUser } from '../lib/api'
+import PasswordInput from '../components/PasswordInput'
 import '../App.css'
 
 function Login() {
@@ -44,7 +45,7 @@ function Login() {
 
                     <div className="form-group">
                         <label htmlFor="password">Password</label>
-                        <input id="password" type="password" placeholder="Password" value={formData.password} onChange={handleChange} required />
+                        <PasswordInput id="password" placeholder="Password" value={formData.password} onChange={handleChange} />
                     </div>
                     <div>
                         <button type="submit" disabled={loading}>
